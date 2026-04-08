@@ -1,0 +1,46 @@
+name: patient-triage-env
+description: RL environment for hospital triage optimization
+version: 1.0.0
+tags:
+  - openenv
+  - healthcare
+  - triage
+
+entry_point: env.triage_env:TriageEnv
+interface:
+  observation_model: env.triage_env:Observation
+  action_model: env.triage_env:Action
+  reward_model: env.triage_env:Reward
+  methods:
+    - reset
+    - state
+    - step
+
+inference:
+  script: inference.py
+  env_vars:
+    - OPENAI_API_KEY
+    - API_BASE_URL
+    - MODEL_NAME
+
+tasks:
+  - id: easy
+    file: tasks/easy.py
+    difficulty: easy
+    objective: Prioritize urgent patients while keeping average wait low in a low-load clinic.
+    grader: tasks.easy:grade_episode
+  - id: medium
+    file: tasks/medium.py
+    difficulty: medium
+    objective: Sustain treatment throughput under moderate arrivals while minimizing preventable deaths.
+    grader: tasks.medium:grade_episode
+  - id: hard
+    file: tasks/hard.py
+    difficulty: hard
+    objective: Manage a crisis surge with constrained doctors and high queue pressure without overload.
+    grader: tasks.hard:grade_episode
+  - id: critical
+    file: tasks/critical.py
+    difficulty: critical
+    objective: Manage mass casualty crisis with triage conflicts - low-severity high-wait patients will die unless treated immediately.
+    grader: tasks.critical:grade_episode

@@ -1,0 +1,63 @@
+- Refactored triage environment to support configurable clinical dynamics and reproducible runs.
+- Added deterministic seeding support via environment parameters.
+- Added dynamic patient arrivals with configurable arrival probability and total-patient cap.
+- Enforced doctor capacity per step for treatment decisions.
+- Added explicit patient outcomes using status values: waiting, treated, deceased.
+- Preserved backward compatibility by keeping the alive field in patient records.
+- Added action validation for malformed actions and invalid/unavailable patient selections.
+- Expanded reward shaping to provide dense trajectory feedback:
+	- reward for treating critical and non-critical patients
+	- wait-time penalty for untreated patients
+	- death penalty
+	- invalid action penalty
+- Added structured reward component tracking in info payload.
+- Added richer state output with summary counts and episode metrics.
+- Added termination reason tracking with explicit values (timeout, all_resolved, system_overload).
+- Added built-in baseline heuristics:
+	- highest severity first
+	- longest wait first
+
+- Added typed Pydantic models in the environment module:
+	- Patient
+	- Observation
+	- Action
+	- Reward
+
+- Added task metadata and deterministic grading for all task levels:
+	- easy, medium, hard task specs with objectives and difficulty labels
+	- per-task grade_episode(final_state, total_reward) functions
+	- grader outputs normalized score in [0.0, 1.0]
+
+- Reworked baseline inference script:
+	- evaluates easy, medium, and hard tasks in one run
+	- supports OpenAI client usage with HF_TOKEN credential
+	- supports deterministic heuristic fallback via ALLOW_HEURISTIC_FALLBACK=1
+	- prints per-task and aggregate scores
+
+- Expanded openenv.yaml metadata:
+	- added version and tags
+	- declared typed model references
+	- added task objectives, difficulty labels, and grader entry points
+
+- Updated requirements.txt to include:
+	- pydantic
+	- openai
+	- openenv
+
+- Rewrote README with:
+	- environment motivation and overview
+	- action/observation/reward definitions
+	- task descriptions and grader expectations
+	- setup, run, Docker usage, and baseline reporting guidance
+	- OpenEnv validation command reference
+
+- Added test suite in tests/test_triage_env.py covering:
+	- reproducibility under fixed seed
+	- doctor-capacity enforcement
+	- invalid action handling
+	- explicit deceased outcomes
+
+- Validation and runtime checks completed:
+	- all unit tests pass
+	- inference baseline executes successfully in fallback mode
+	- openenv package is installed in venv, but the installed version does not expose the openenv validate CLI command
