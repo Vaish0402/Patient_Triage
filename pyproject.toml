@@ -16,5 +16,8 @@ dependencies = [
     "flask>=3.0.0",
 ]
 
+[project.scripts]
+server = "server.app:main"
+
 [tool.setuptools]
 py-modules = ["app", "inference"]
